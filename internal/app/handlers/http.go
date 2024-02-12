@@ -16,6 +16,7 @@ type Service interface {
 	Crawl(ctx context.Context, urls []string) (map[string][]byte, error)
 }
 
+// HTTPHandler is a handler for http request
 type HTTPHandler struct {
 	crawlService Service
 	maxUrls      int
@@ -33,6 +34,7 @@ func NewHTTPHandler(crawlService Service, maxUrls int, logger logger.Logger) *HT
 type CrawlRequest []string
 type CrawlResponse map[string]string
 
+// Crawl is a handler for http request that helps crawl multiple URLs.
 func (h *HTTPHandler) Crawl(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()

@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// WriteJSON writes data to the response as JSON
 func WriteJSON(w http.ResponseWriter, data interface{}, code int) {
 	bytes, err := json.Marshal(&data)
 	if err != nil {
@@ -17,6 +18,7 @@ func WriteJSON(w http.ResponseWriter, data interface{}, code int) {
 	w.Write(bytes) //nolint:errcheck // ignore
 }
 
+// Error writes an error to the response as string
 func Error(w http.ResponseWriter, s string, code int) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(code)

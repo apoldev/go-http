@@ -32,6 +32,7 @@ type resultCrawl struct {
 	Err  error
 }
 
+// Crawl is a method for crawling multiple URLs.
 func (c *Service) Crawl(ctx context.Context, urls []string) (map[string][]byte, error) {
 	ch := make(chan string, len(urls))
 	resultCh := make(chan resultCrawl)
