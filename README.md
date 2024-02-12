@@ -1,5 +1,8 @@
 # go-http
 
+![tests action](https://github.com/apoldev/go-http/actions/workflows/tests.yml/badge.svg?branch=master)
+
+
 Задача описана [тут](#hh)
 
 ___ 
