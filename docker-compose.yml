@@ -1,0 +1,21 @@
+version: "3.7"
+
+volumes:
+  db:
+  nats_storage:
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./build/dev.Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ':8080'
+      SERVER_MAX_CONNECTIONS: '100'
+      CRAWLER_MAX_URLS: '20'
+      CRAWLER_MAX_WORKERS: '4'
+      CRAWLER_REQUEST_TIMEOUT_MS: '1000'
+    volumes:
+      - .:/app
