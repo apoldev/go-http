@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/apoldev/go-http/internal/pkg/app"
 	"log"
+
+	"github.com/apoldev/go-http/internal/pkg/app"
 )
 
 func main() {

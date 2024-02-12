@@ -3,18 +3,19 @@ package app
 import (
 	"context"
 	"errors"
-	"github.com/apoldev/go-http/internal/app/crawler"
-	"github.com/apoldev/go-http/internal/app/handlers"
-	"github.com/apoldev/go-http/internal/app/lib/env"
-	"github.com/apoldev/go-http/internal/app/limiter"
-	"github.com/apoldev/go-http/internal/app/middleware"
-	"github.com/apoldev/go-http/pkg/logger"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/apoldev/go-http/internal/app/crawler"
+	"github.com/apoldev/go-http/internal/app/handlers"
+	"github.com/apoldev/go-http/internal/app/lib/env"
+	"github.com/apoldev/go-http/internal/app/limiter"
+	"github.com/apoldev/go-http/internal/app/middleware"
+	"github.com/apoldev/go-http/pkg/logger"
 )
 
 type App struct {
@@ -74,7 +75,6 @@ func New() (*App, error) {
 }
 
 func (a *App) Run() error {
-
 	go func() {
 		err := a.srv.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {

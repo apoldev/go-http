@@ -16,7 +16,7 @@ type Service interface {
 	Crawl(ctx context.Context, urls []string) (map[string][]byte, error)
 }
 
-// HTTPHandler is a handler for http request
+// HTTPHandler is a handler for http request.
 type HTTPHandler struct {
 	crawlService Service
 	maxUrls      int
