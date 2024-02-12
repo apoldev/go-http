@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/apoldev/go-http/internal/app/crawler"
@@ -21,6 +25,7 @@ const (
 	DefaultCrawlerRequestTimeoutMs = 1000
 	DefaultServerReadWriteTimeout  = time.Second * 10
 	DefaultServerIdleTimeout       = time.Second * 60
+	DefaultShutdownTimeout         = time.Second * 15
 )
 
 func main() {
@@ -52,8 +57,6 @@ func main() {
 	handler := middleware.LimitMiddleware(limiter, http.HandlerFunc(httpHandler.Crawl))
 	mux.Handle("/", handler)
 
-	logger.Printf("Server started on %s", addr)
-
 	server := http.Server{
 		Addr:        addr,
 		Handler:     mux,
@@ -61,8 +64,28 @@ func main() {
 		ReadTimeout: DefaultServerReadWriteTimeout,
 	}
 
-	err := server.ListenAndServe()
-	if err != nil {
-		logger.Fatalf("Server failed: %v", err)
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			logger.Printf("Server failed: %v", err)
+		}
+	}()
+
+	logger.Printf("Server started on %s", addr)
+
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	<-done
+
+	logger.Printf("Server stopping")
+
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultShutdownTimeout)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		logger.Fatalf("failed to stop server: %v", err)
+		return
 	}
+
+	logger.Printf("Server stopped")
 }
