@@ -1,11 +1,12 @@
 package limiter_test
 
 import (
-	"github.com/apoldev/go-http/internal/app/limiter"
-	"github.com/stretchr/testify/require"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/apoldev/go-http/internal/app/limiter"
+	"github.com/stretchr/testify/require"
 )
 
 type limiterI interface {
@@ -14,7 +15,7 @@ type limiterI interface {
 }
 
 func TestLimiter(t *testing.T) {
-
+	t.Parallel()
 	cases := []struct {
 		name               string
 		limiter            limiterI
@@ -72,14 +73,11 @@ func TestLimiter(t *testing.T) {
 			}
 
 			require.Equal(t, c.expectedStatusesOK, count)
-
 		})
 	}
-
 }
 
 func BenchmarkChanAtom(b *testing.B) {
-
 	cases := []struct {
 		name    string
 		limiter limiterI
@@ -111,5 +109,4 @@ func BenchmarkChanAtom(b *testing.B) {
 			}
 		})
 	}
-
 }

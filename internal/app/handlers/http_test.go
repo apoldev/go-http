@@ -5,14 +5,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/apoldev/go-http/internal/app/handlers"
-	"github.com/apoldev/go-http/internal/app/handlers/mocks"
-	"github.com/stretchr/testify/require"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/apoldev/go-http/internal/app/handlers"
+	"github.com/apoldev/go-http/internal/app/handlers/mocks"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCrawlHandler(t *testing.T) {
@@ -93,7 +94,6 @@ func TestCrawlHandler(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-
 			ctx := context.Background()
 			mockCrawler := mocks.NewService(t)
 			h := handlers.NewHTTPHandler(mockCrawler, 1, logger)
@@ -123,8 +123,6 @@ func TestCrawlHandler(t *testing.T) {
 					require.Equal(t, string(tc.results[r]), results[r])
 				}
 			}
-
 		})
 	}
-
 }

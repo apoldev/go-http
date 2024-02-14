@@ -3,18 +3,19 @@ package crawler_test
 import (
 	"bytes"
 	"context"
-	"github.com/apoldev/go-http/internal/app/crawler"
-	"github.com/stretchr/testify/require"
 	"io"
 	"log"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/apoldev/go-http/internal/app/crawler"
+	"github.com/stretchr/testify/require"
 )
 
-type RoundTripFunc func(req *http.Request) *http.Response
+type roundTripFunc func(req *http.Request) *http.Response
 
-func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 	time.Sleep(100 * time.Millisecond)
 	select {
 	case <-req.Context().Done():
@@ -24,9 +25,9 @@ func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 }
 
-func getFakeHttpClient(datas map[string][]byte) *http.Client {
+func getFakeHTTPClient(datas map[string][]byte) *http.Client {
 	return &http.Client{
-		Transport: RoundTripFunc(func(req *http.Request) *http.Response {
+		Transport: roundTripFunc(func(req *http.Request) *http.Response {
 			for url, data := range datas {
 				if req.URL.String() == url {
 					return &http.Response{
@@ -50,7 +51,7 @@ func TestService_Crawl(t *testing.T) {
 		"http://yandex.ru":                             []byte(`<html><body>hello</body></html>`),
 		"http://mail.ru":                               []byte(`<html><body>mail</body></html>`),
 	}
-	client := getFakeHttpClient(urls)
+	client := getFakeHTTPClient(urls)
 
 	ctx1 := context.Background()
 	ctx2, cancel := context.WithCancel(context.Background())
@@ -114,7 +115,7 @@ func TestService_Crawl(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			//t.Parallel()
+			// t.Parallel()
 			c := crawler.New(tc.workerCount, tc.crawlerRequestTimeoutMs, client, logger)
 			data, err := c.Crawl(tc.ctx, tc.urls)
 
@@ -129,8 +130,6 @@ func TestService_Crawl(t *testing.T) {
 					require.Equal(t, tc.expectedData[i], v)
 				}
 			}
-
 		})
 	}
-
 }

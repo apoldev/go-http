@@ -9,14 +9,6 @@
 
 run:
   timeout: 3m
-  skip-dirs:
-    - internal/app/restapi
-
-  skip-files:
-    - "_test.go$"
-    - "cmd/client/main.go"
-    - "cmd/cdek-scrape-example/main.go"
-    - "gen.go"
 
 # This file contains only configs which differ from defaults.
 # All possible options can be found here https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
