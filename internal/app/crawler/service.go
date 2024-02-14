@@ -38,7 +38,9 @@ func (c *Service) Crawl(ctx context.Context, urls []string) (map[string][]byte, 
 	resultCh := make(chan resultCrawl)
 	var wg sync.WaitGroup
 	var cancel context.CancelFunc
+
 	ctx, cancel = context.WithCancel(ctx)
+	defer cancel()
 
 	wg.Add(c.workerCount)
 	for i := 0; i < c.workerCount; i++ {
@@ -60,14 +62,12 @@ func (c *Service) Crawl(ctx context.Context, urls []string) (map[string][]byte, 
 	for res := range resultCh {
 		if res.Err != nil {
 			c.logger.Printf("got error at %s. Error: %v", res.URL, res.Err)
-			defer cancel()
 			return nil, res.Err
 		}
 		c.logger.Printf("got data from %s. Content-Length: %d", res.URL, len(res.Data))
 		results[res.URL] = res.Data
 	}
 
-	cancel()
 	return results, nil
 }
 
@@ -89,7 +89,6 @@ func (c *Service) worker(ctx context.Context, ch <-chan string, resultCh chan<- 
 				return
 			}
 			data, err := c.httpRequest(ctx, url)
-			// c.logger.Printf("got data from %s. Error: %v", url, err)
 			if err != nil {
 				resultCh <- resultCrawl{
 					Err: err,

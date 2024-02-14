@@ -78,14 +78,14 @@ func (a *App) Run() error {
 	go func() {
 		err := a.srv.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			a.logger.Printf("Server failed: %v", err)
+			a.logger.Fatalf("Server failed: %v", err)
 		}
 	}()
 
 	a.logger.Printf("Server started on %s", a.srv.Addr)
 
 	done := make(chan os.Signal, 1)
-	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
 	<-done
 
 	a.logger.Printf("Server stopping")

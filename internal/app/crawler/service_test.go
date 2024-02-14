@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"testing"
 	"time"
 )
@@ -42,7 +41,7 @@ func getFakeHttpClient(datas map[string][]byte) *http.Client {
 }
 
 func TestService_Crawl(t *testing.T) {
-	logger := log.New(os.Stdout, "", log.LstdFlags)
+	logger := log.New(io.Discard, "", log.LstdFlags)
 
 	// Fake external servers
 	urls := map[string][]byte{
